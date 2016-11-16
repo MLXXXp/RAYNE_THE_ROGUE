@@ -102,7 +102,8 @@ Navigate Rayne from cave to cave taking the dragon’s treasures, but beware the
  
  Hold down and B when starting to erase the normal save game
  
- Hold A & B when starting to erase EEPROM
+ Hold A & B when starting to erase **ALL of the EEPROM space**.
+ This will clear all EEPROM data, even if used by other games!
  
  Uses 32 bytes of EEPROM
  
