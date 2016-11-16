@@ -1,5 +1,5 @@
-#include <eeprom.h>
-#include <arduino.h>
+#include <EEPROM.h>
+#include <Arduino.h>
 #include "sfs.h"
 
 // Constructor

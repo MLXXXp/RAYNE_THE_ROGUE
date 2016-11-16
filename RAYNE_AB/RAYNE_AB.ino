@@ -1,10 +1,8 @@
-#include <EEPROM.h>
-#include <SPI.h>
-#include <Arduboy.h>
-#include <ArduboyPlaytune.h>
+#include <Arduboy2.h>
+#include <ArduboyTones.h>
 
-Arduboy arduboy;
-ArduboyPlaytune tunes;
+Arduboy2Base arduboy;
+ArduboyTones tunes(arduboy.audio.enabled);
 
 #include "fonts3x5.h"
 
@@ -159,7 +157,6 @@ bool down_button_down=false;
 bool left_button_down=false;
 bool right_button_down=false;
 int8_t button_on=0;
-boolean soundYesNo;
 
 #define totalObjects 10
 #define totalProjectiles 10
@@ -607,6 +604,8 @@ PROGMEM const int8_t rarities[] = {
 void setup() {
   // put your setup code here, to run once:
   arduboy.boot();
+  arduboy.bootLogo();
+  arduboy.audio.begin();
   arduboy.setFrameRate(30);
   //clear_eeprom();
   if(no_save){
@@ -674,11 +673,6 @@ void setup() {
       files[0].Save();
     }
   }
-  //load sound state
-  tunes.initChannel(PIN_SPEAKER_1);
-  tunes.initChannel(PIN_SPEAKER_2);
-  if (EEPROM.read(EEPROM_AUDIO_ON_OFF)) soundYesNo = true;
-  if(soundYesNo){arduboy.audio.on();}else{arduboy.audio.off();}
   arduboy.initRandomSeed();  
   gameState  = STATE_TITLE_SCREEN;
 }
@@ -701,7 +695,7 @@ void loop() {
       drawString(84,15,"PLAY",0,NULL);
       drawString(84,25,"HELP",0,NULL);
       drawString(84,35,"SOUND ",0,NULL);
-      if(soundYesNo){
+      if(arduboy.audio.enabled()){
         drawString(108,35,"ON",0,NULL);
       }else{
         drawString(108,35,"OFF",0,NULL);
@@ -746,9 +740,12 @@ void loop() {
         }else if(button_on==1){//help screen
           gameState = STATE_HELP_SCREEN;
         }else if(button_on==2){//toggle sound
-          soundYesNo = !soundYesNo;
-          if (soundYesNo == true){arduboy.audio.on();tunes.tone(250, 250);}
-          else arduboy.audio.off();
+          if (!arduboy.audio.enabled()){
+            arduboy.audio.on();
+            tunes.tone(250, 250);
+          }else{
+            arduboy.audio.off();
+          }
           arduboy.audio.saveOnOff();
         }else if(button_on==3){//info screen
           gameState = STATE_INFO_SCREEN;
